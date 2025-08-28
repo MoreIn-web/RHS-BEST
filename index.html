@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Morein - Video Sharing Platform</title>
+    <title>StreamVid - Share Your Videos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -12,23 +12,28 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        :root {
-            --primary: #3498db;
-            --secondary: #2c3e50;
-            --accent: #e74c3c;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --success: #2ecc71;
-        }
-
+        
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
         }
-
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            min-height: 90vh;
+            position: relative;
+        }
+        
+        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -40,418 +45,312 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 1000;
             transition: opacity 0.5s ease-out;
         }
-
-        .loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        
         .logo {
             font-size: 3.5rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
+            color: #6a11cb;
+            margin-bottom: 20px;
             animation: pulse 1.5s infinite;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
+        
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid rgba(52, 152, 219, 0.2);
+            border: 5px solid rgba(106, 17, 203, 0.2);
             border-radius: 50%;
-            border-top-color: var(--primary);
+            border-top-color: #6a11cb;
             animation: spin 1s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-        }
-
-        .logo-small {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 20px;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--dark);
-            cursor: pointer;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        .icon-btn:hover {
-            color: var(--primary);
-        }
-
+        
+        /* Auth Screens */
         .auth-container {
+            padding: 40px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
+            justify-content: center;
+            min-height: 70vh;
+            text-align: center;
         }
-
-        .auth-box {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        
+        .auth-form {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            padding: 30px;
             animation: fadeIn 0.5s ease-out;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .auth-header h2 {
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
+        
         .auth-tabs {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #eee;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #eee;
         }
-
+        
         .auth-tab {
             flex: 1;
+            padding: 12px;
             text-align: center;
-            padding: 10px;
             cursor: pointer;
             transition: all 0.3s;
         }
-
+        
         .auth-tab.active {
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
+            background: #6a11cb;
+            color: white;
         }
-
+        
+        h1 {
+            color: #6a11cb;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
         .form-group {
             margin-bottom: 20px;
+            text-align: left;
         }
-
-        .form-group label {
+        
+        label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: var(--dark);
         }
-
-        .form-group input {
+        
+        input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
             transition: border 0.3s;
         }
-
-        .form-group input:focus {
-            border-color: var(--primary);
+        
+        input:focus {
+            border-color: #6a11cb;
             outline: none;
         }
-
+        
         .btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
+            background: #6a11cb;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1rem;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            width: 100%;
         }
-
+        
         .btn:hover {
-            background: #2980b9;
+            background: #2575fc;
+            transform: translateY(-2px);
         }
-
-        .main-content {
-            padding: 40px 0;
+        
+        /* Main App */
+        .main-app {
+            display: none;
+            flex-direction: column;
+            height: 100%;
         }
-
-        .section-title {
-            margin-bottom: 25px;
-            color: var(--dark);
-            position: relative;
-            padding-bottom: 10px;
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: var(--primary);
+        
+        .app-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #6a11cb;
         }
-
+        
+        .header-icons {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .icon-btn {
+            background: #f1f1f1;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .icon-btn:hover {
+            background: #6a11cb;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .content {
+            padding: 30px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
         }
-
+        
         .video-card {
-            background: white;
-            border-radius: 8px;
+            background: #f9f9f9;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s;
-            cursor: pointer;
+            animation: slideUp 0.5s ease-out;
         }
-
+        
         .video-card:hover {
             transform: translateY(-5px);
         }
-
+        
         .video-thumb {
-            width: 100%;
             height: 180px;
             background: #ddd;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+            font-size: 3rem;
         }
-
-        .video-thumb::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            clip-path: polygon(0 0, 0% 100%, 100% 50%);
-        }
-
+        
         .video-info {
             padding: 15px;
         }
-
+        
         .video-title {
             font-weight: 600;
             margin-bottom: 8px;
-            color: var(--dark);
+            font-size: 1.1rem;
         }
-
+        
         .video-desc {
             color: #666;
             font-size: 0.9rem;
-            margin-bottom: 12px;
+            line-height: 1.4;
         }
-
-        .video-uploader {
-            display: flex;
-            align-items: center;
-            color: #777;
-            font-size: 0.85rem;
-        }
-
-        .uploader-avatar {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: #ccc;
-            margin-right: 8px;
-        }
-
+        
         .no-videos {
             text-align: center;
             padding: 40px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            grid-column: 1 / -1;
+            color: #666;
         }
-
+        
         .no-videos i {
-            font-size: 3rem;
+            font-size: 4rem;
+            margin-bottom: 20px;
             color: #ddd;
-            margin-bottom: 15px;
         }
-
+        
         .no-videos p {
-            color: #777;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
         }
-
-        .upload-modal {
+        
+        /* Upload Modal */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            display: flex;
+            z-index: 100;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
         }
-
-        .upload-modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .upload-form {
+        
+        .modal-content {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             width: 90%;
-            max-width: 500px;
-            padding: 25px;
+            max-width: 600px;
+            padding: 30px;
+            animation: modalFade 0.3s ease-out;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
             position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s;
         }
-
-        .upload-modal.active .upload-form {
-            transform: translateY(0);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+        
+        .close-btn {
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: #777;
+            color: #666;
+            position: absolute;
+            right: 0;
+            top: 0;
         }
-
-        .upload-title {
-            margin-bottom: 20px;
-            color: var(--dark);
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-
-        .file-drop {
-            border: 2px dashed #ddd;
-            border-radius: 5px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: border 0.3s;
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .file-drop:hover {
-            border-color: var(--primary);
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .file-drop i {
-            font-size: 2.5rem;
-            color: #ddd;
-            margin-bottom: 10px;
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .hidden {
-            display: none;
+        
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
-
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 40px 0;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .footer-logo {
-            font-size: 2rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .footer-link {
-            color: #ddd;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
-        }
-
-        .copyright {
-            color: #999;
-            font-size: 0.9rem;
-        }
-
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .videos-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 20px;
+            .container {
+                border-radius: 0;
+                min-height: 100vh;
             }
             
-            .auth-box {
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-container {
                 padding: 20px;
             }
         }
@@ -459,205 +358,160 @@
 </head>
 <body>
     <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="logo">Morein</div>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="logo">StreamVid</div>
         <div class="spinner"></div>
-        <p>Loading your video experience...</p>
     </div>
 
-    <!-- Authentication Screen -->
-    <div id="authScreen" class="auth-container">
-        <div class="auth-box">
-            <div class="auth-header">
-                <h2>Welcome to Morein</h2>
-                <p>Please login or sign up to continue</p>
+    <div class="container">
+        <!-- Authentication Screen -->
+        <div class="auth-container" id="authContainer">
+            <div class="auth-form">
+                <h1>Welcome to StreamVid</h1>
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="loginTab">Login</div>
+                    <div class="auth-tab" id="signupTab">Sign Up</div>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                
+                <form id="signupForm" style="display: none;">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" placeholder="Create a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="btn">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Main Application -->
+        <div class="main-app" id="mainApp">
+            <div class="header">
+                <div class="app-logo">StreamVid</div>
+                <div class="header-icons">
+                    <div class="icon-btn" id="uploadBtn">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <div class="icon-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
             </div>
             
-            <div class="auth-tabs">
-                <div class="auth-tab active" id="loginTab">Login</div>
-                <div class="auth-tab" id="signupTab">Sign Up</div>
+            <div class="content">
+                <div class="videos-grid" id="videosGrid">
+                    <!-- Video cards will be added here dynamically -->
+                </div>
+                
+                <div class="no-videos" id="noVideos">
+                    <i class="fas fa-video-slash"></i>
+                    <p>No videos available yet</p>
+                    <p>Be the first to upload a video!</p>
+                </div>
             </div>
-            
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginUsername">Username</label>
-                    <input type="text" id="loginUsername" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn">Login</button>
-            </form>
-            
-            <form id="signupForm" class="hidden">
-                <div class="form-group">
-                    <label for="signupUsername">Username</label>
-                    <input type="text" id="signupUsername" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" required>
-                </div>
-                <button type="submit" class="btn">Sign Up</button>
-            </form>
         </div>
     </div>
-
-    <!-- Main Application (initially hidden) -->
-    <div id="app" class="hidden">
-        <header>
-            <div class="container nav-container">
-                <a href="#" class="logo-small">Morein</a>
-                <div class="nav-icons">
-                    <button class="icon-btn" id="uploadBtn" title="Upload Video">
-                        <i class="fas fa-upload"></i>
-                    </button>
-                    <button class="icon-btn" id="logoutBtn" title="Logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="main-content">
-            <div class="container">
-                <h2 class="section-title">Recommended Videos</h2>
-                
-                <div class="videos-grid" id="videosContainer">
-                    <!-- Videos will be dynamically inserted here -->
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <div class="container footer-content">
-                <div class="footer-logo">Morein</div>
-                <div class="footer-links">
-                    <a href="#" class="footer-link">About</a>
-                    <a href="#" class="footer-link">Contact</a>
-                    <a href="#" class="footer-link">Privacy Policy</a>
-                    <a href="#" class="footer-link">Terms of Service</a>
-                </div>
-                <p class="copyright">© 2023 Morein. All rights reserved.</p>
-            </div>
-        </footer>
-    </div>
-
+    
     <!-- Upload Modal -->
-    <div class="upload-modal" id="uploadModal">
-        <div class="upload-form">
-            <button class="close-modal" id="closeModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <h3 class="upload-title">Upload Video</h3>
-            
-            <div class="file-drop" id="fileDrop">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>Click to browse or drag & drop your video</p>
-                <input type="file" accept="video/*" class="hidden" id="fileInput">
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Video</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
             </div>
-            
             <div class="form-group">
                 <label for="videoTitle">Video Title</label>
-                <input type="text" id="videoTitle" placeholder="Enter a title for your video">
+                <input type="text" id="videoTitle" placeholder="Enter video title">
             </div>
-            
             <div class="form-group">
                 <label for="videoDescription">Description</label>
-                <input type="text" id="videoDescription" placeholder="Describe your video">
+                <input type="text" id="videoDescription" placeholder="Enter video description">
             </div>
-            
-            <button class="btn" id="submitUpload">Upload Video</button>
+            <div class="form-group">
+                <label for="videoFile">Select Video</label>
+                <input type="file" id="videoFile" accept="video/*">
+            </div>
+            <button class="btn" id="submitVideo">Upload Video</button>
         </div>
     </div>
 
     <script>
+        // Simulate loading screen
+        setTimeout(() => {
+            document.getElementById('loadingScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 500);
+        }, 2000);
+        
         // DOM Elements
-        const loadingScreen = document.querySelector('.loading-screen');
-        const authScreen = document.getElementById('authScreen');
-        const app = document.getElementById('app');
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
         const loginTab = document.getElementById('loginTab');
         const signupTab = document.getElementById('signupTab');
-        const logoutBtn = document.getElementById('logoutBtn');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const authContainer = document.getElementById('authContainer');
+        const mainApp = document.getElementById('mainApp');
         const uploadBtn = document.getElementById('uploadBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
         const uploadModal = document.getElementById('uploadModal');
         const closeModal = document.getElementById('closeModal');
-        const fileDrop = document.getElementById('fileDrop');
-        const fileInput = document.getElementById('fileInput');
-        const submitUpload = document.getElementById('submitUpload');
-        const videosContainer = document.getElementById('videosContainer');
-
+        const submitVideo = document.getElementById('submitVideo');
+        const videosGrid = document.getElementById('videosGrid');
+        const noVideos = document.getElementById('noVideos');
+        
         // Sample videos data
-        const sampleVideos = [
-            {
-                title: "Beautiful Nature Scenery",
-                description: "Relaxing views of mountains and lakes",
-                uploader: "nature_lover"
-            },
-            {
-                title: "Cooking Tutorial: Pasta",
-                description: "Learn how to make delicious pasta in 10 minutes",
-                uploader: "chef_john"
-            },
-            {
-                title: "Morning Yoga Routine",
-                description: "Start your day with this 15 minute yoga flow",
-                uploader: "yoga_master"
-            },
-            {
-                title: "Travel Vlog: Japan Trip",
-                description: "Exploring Tokyo and Kyoto",
-                uploader: "world_traveler"
-            },
-            {
-                title: "Guitar Lesson for Beginners",
-                description: "Learn your first song in just one lesson",
-                uploader: "music_teacher"
-            },
-            {
-                title: "Time-lapse: City Life",
-                description: "A day in the city compressed into 2 minutes",
-                uploader: "urban_photographer"
+        let videos = [];
+        
+        // Initialize localStorage if empty
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('videos')) {
+            localStorage.setItem('videos', JSON.stringify([]));
+        }
+        
+        // Check if user is logged in (from localStorage)
+        function checkLogin() {
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                showMainApp();
             }
-        ];
-
-        // Simulate loading process
-        setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            
-            // Check if user is logged in (from localStorage)
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                authScreen.classList.add('hidden');
-                app.classList.remove('hidden');
-                loadVideos();
-            } else {
-                authScreen.classList.remove('hidden');
-            }
-        }, 2500);
-
-        // Switch between login and signup tabs
+        }
+        
+        // Switch between login and signup forms
         loginTab.addEventListener('click', () => {
             loginTab.classList.add('active');
             signupTab.classList.remove('active');
-            loginForm.classList.remove('hidden');
-            signupForm.classList.add('hidden');
+            loginForm.style.display = 'block';
+            signupForm.style.display = 'none';
         });
-
+        
         signupTab.addEventListener('click', () => {
             signupTab.classList.add('active');
             loginTab.classList.remove('active');
-            signupForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
+            signupForm.style.display = 'block';
+            loginForm.style.display = 'none';
         });
-
+        
         // Handle login
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -669,16 +523,13 @@
             const user = users.find(u => u.username === username && u.password === password);
             
             if (user) {
-                // Set current user
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                authScreen.classList.add('hidden');
-                app.classList.remove('hidden');
-                loadVideos();
+                showMainApp();
             } else {
                 alert('Invalid username or password');
             }
         });
-
+        
         // Handle signup
         signupForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -703,122 +554,108 @@
             const newUser = { username, password };
             users.push(newUser);
             localStorage.setItem('users', JSON.stringify(users));
-            
-            // Set as current user
             localStorage.setItem('currentUser', JSON.stringify(newUser));
-            authScreen.classList.add('hidden');
-            app.classList.remove('hidden');
-            loadVideos();
+            
+            showMainApp();
         });
-
+        
+        // Show main application
+        function showMainApp() {
+            authContainer.style.display = 'none';
+            mainApp.style.display = 'flex';
+            loadVideos();
+        }
+        
+        // Load videos from localStorage
+        function loadVideos() {
+            videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            
+            if (videos.length > 0) {
+                noVideos.style.display = 'none';
+                videosGrid.innerHTML = '';
+                
+                videos.forEach(video => {
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.innerHTML = `
+                        <div class="video-thumb">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-title">${video.title}</div>
+                            <div class="video-desc">${video.description}</div>
+                            <div class="video-author">By: ${video.uploadedBy}</div>
+                        </div>
+                    `;
+                    videosGrid.appendChild(videoCard);
+                });
+            } else {
+                noVideos.style.display = 'block';
+            }
+        }
+        
         // Handle logout
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('currentUser');
-            app.classList.add('hidden');
-            authScreen.classList.remove('hidden');
+            mainApp.style.display = 'none';
+            authContainer.style.display = 'flex';
+            
+            // Reset forms
+            loginForm.reset();
+            signupForm.reset();
         });
-
-        // Upload modal functionality
+        
+        // Show upload modal
         uploadBtn.addEventListener('click', () => {
-            uploadModal.classList.add('active');
+            uploadModal.style.display = 'flex';
         });
-
+        
+        // Close modal
         closeModal.addEventListener('click', () => {
-            uploadModal.classList.remove('active');
+            uploadModal.style.display = 'none';
         });
-
-        fileDrop.addEventListener('click', () => {
-            fileInput.click();
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === uploadModal) {
+                uploadModal.style.display = 'none';
+            }
         });
-
-        // Handle file drag and drop
-        fileDrop.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileDrop.style.borderColor = '#3498db';
-        });
-
-        fileDrop.addEventListener('dragleave', () => {
-            fileDrop.style.borderColor = '#ddd';
-        });
-
-        fileDrop.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileDrop.style.borderColor = '#ddd';
-            // Handle file upload here
-        });
-
+        
         // Handle video upload
-        submitUpload.addEventListener('click', () => {
+        submitVideo.addEventListener('click', () => {
             const title = document.getElementById('videoTitle').value;
             const description = document.getElementById('videoDescription').value;
             
-            if (!title) {
-                alert('Please add a title to your video');
+            if (!title || !description) {
+                alert('Please fill all fields');
                 return;
             }
             
-            // In a real app, you would upload the video file to a server
-            // Here we'll just add it to our videos list
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            
-            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
-            videos.unshift({
+            const newVideo = {
                 title,
                 description,
-                uploader: currentUser.username
-            });
+                uploadedBy: currentUser.username
+            };
             
+            const videos = JSON.parse(localStorage.getItem('videos') || '[]');
+            videos.push(newVideo);
             localStorage.setItem('videos', JSON.stringify(videos));
             
-            // Close modal and refresh videos
-            uploadModal.classList.remove('active');
-            loadVideos();
-            
-            // Reset form
+            // Reset form and close modal
             document.getElementById('videoTitle').value = '';
             document.getElementById('videoDescription').value = '';
+            document.getElementById('videoFile').value = '';
+            
+            uploadModal.style.display = 'none';
+            loadVideos();
         });
-
-        // Load videos from localStorage or use sample data
-        function loadVideos() {
-            let videos = JSON.parse(localStorage.getItem('videos'));
-            
-            // If no videos in storage, use sample data
-            if (!videos || videos.length === 0) {
-                videos = sampleVideos;
-                localStorage.setItem('videos', JSON.stringify(videos));
-            }
-            
-            // Clear container
-            videosContainer.innerHTML = '';
-            
-            // Add videos to container
-            if (videos.length === 0) {
-                videosContainer.innerHTML = `
-                    <div class="no-videos">
-                        <i class="fas fa-video-slash"></i>
-                        <p>No videos available. Upload the first one!</p>
-                    </div>
-                `;
-            } else {
-                videos.forEach(video => {
-                    const videoEl = document.createElement('div');
-                    videoEl.className = 'video-card';
-                    videoEl.innerHTML = `
-                        <div class="video-thumb"></div>
-                        <div class="video-info">
-                            <h3 class="video-title">${video.title}</h3>
-                            <p class="video-desc">${video.description}</p>
-                            <div class="video-uploader">
-                                <div class="uploader-avatar"></div>
-                                <span>${video.uploader}</span>
-                            </div>
-                        </div>
-                    `;
-                    videosContainer.appendChild(videoEl);
-                });
-            }
-        }
+        
+        // Check if user is logged in on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkLogin();
+        });
     </script>
 </body>
 </html>
